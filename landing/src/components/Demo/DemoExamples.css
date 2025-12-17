@@ -1,0 +1,43 @@
+.demo-examples {
+  margin-top: var(--spacing-xl);
+}
+
+.demo-examples-title {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.example-card {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.example-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.example-card h4 {
+  font-size: 1rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.example-snippet {
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.example-card .button {
+  width: 100%;
+  margin-top: auto;
+}

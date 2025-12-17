@@ -1,0 +1,24 @@
+services:
+  # Landing page estática
+  - type: static
+    name: legal-expand-landing
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./landing/dist
+    pullRequestPreviewsEnabled: true
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+      - path: /*.txt
+        name: Content-Type
+        value: text/plain; charset=utf-8
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
