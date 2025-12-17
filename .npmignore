@@ -1,0 +1,66 @@
+# Archivos de desarrollo
+*.log
+*.map
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Claude
+.claude/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Landing page (no publicar en NPM)
+landing/
+render.yaml
+
+# Tests
+test/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+coverage/
+.nyc_output/
+
+# Scripts de desarrollo
+scripts/
+
+# Source (solo publicar dist/)
+src/
+
+# Configuración de desarrollo
+tsconfig.json
+tsconfig.build.json
+vitest.config.ts
+.eslintrc*
+.prettierrc*
+.editorconfig
+
+# Build artifacts temporales
+*.tsbuildinfo
+
+# Archivos de datos sin procesar
+*.csv
+*.xlsx
+*.raw.json
+
+# Documentación de desarrollo
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+.github/
+
+# Archivos que SI se incluyen (por si acaso):
+# dist/
+# README.md
+# LICENSE
+# CHANGELOG.md
+# package.json

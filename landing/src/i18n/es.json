@@ -1,0 +1,167 @@
+{
+  "hero": {
+    "title": "legal-expand",
+    "subtitle": "Expansión inteligente de siglas legales españolas",
+    "badge": "646 siglas verificadas | RAE, BOE, DPEJ",
+    "description": "Librería TypeScript que expande automáticamente siglas legales en textos jurídicos españoles, facilitando la comprensión de documentos complejos.",
+    "cta_install": "Instalar paquete",
+    "cta_demo": "Ver demo"
+  },
+  "features": {
+    "title": "Características",
+    "verified": "646 siglas verificadas",
+    "sources": "Fuentes oficiales: RAE, BOE, DPEJ",
+    "variants": "Detección inteligente de variantes",
+    "optimized": "Optimizado para documentos largos",
+    "formats": "Múltiples formatos de salida",
+    "typescript": "TypeScript first",
+    "zero_deps": "Zero dependencies",
+    "tree_shake": "Tree-shakeable (~4KB gzipped)",
+    "ssr": "SSR-safe"
+  },
+  "quickstart": {
+    "title": "Inicio rápido",
+    "install": "Instalación",
+    "basic_usage": "Uso básico",
+    "common_options": "Opciones comunes",
+    "learn_more": "Ver documentación completa"
+  },
+  "demo": {
+    "title": "Demo interactiva",
+    "editor_title": "Prueba en vivo",
+    "examples_title": "Ejemplos predefinidos",
+    "placeholder": "Escribe o pega tu texto legal aquí...",
+    "expand_button": "Expandir siglas",
+    "format_label": "Formato",
+    "format_plain": "Texto plano",
+    "format_html": "HTML",
+    "format_structured": "Estructurado (JSON)",
+    "only_first_label": "Expandir solo primera ocurrencia",
+    "exclude_label": "Excluir siglas (separadas por coma)",
+    "stats_found": "siglas encontradas",
+    "stats_expanded": "expandidas",
+    "error_unknown": "Error desconocido",
+    "example_sentence": "Sentencia judicial",
+    "example_contract": "Contrato de alquiler",
+    "example_notification": "Notificación AEAT",
+    "example_academic": "Documento académico",
+    "example_boe": "Publicación BOE",
+    "example_administrative": "Resolución administrativa",
+    "try_button": "Probar"
+  },
+  "usecases": {
+    "title": "Casos de uso",
+    "students": {
+      "title": "Estudiantes de Derecho",
+      "description": "Comprender textos legales complejos sin consultar constantemente glosarios."
+    },
+    "oppositors": {
+      "title": "Opositores",
+      "description": "Preparar exámenes con terminología clara y ahorro de tiempo."
+    },
+    "academies": {
+      "title": "Academias y Universidades",
+      "description": "Integrar en plataformas educativas para materiales más accesibles."
+    },
+    "law_firms": {
+      "title": "Despachos Legales",
+      "description": "Acelerar revisión de documentos y onboarding de junior associates."
+    },
+    "public_admin": {
+      "title": "Administración Pública",
+      "description": "Clarificar comunicaciones ciudadanas y reducir consultas."
+    },
+    "developers": {
+      "title": "Desarrolladores",
+      "description": "Integrar en aplicaciones legales y APIs de análisis con LLMs."
+    }
+  },
+  "api": {
+    "title": "Referencia de API",
+    "main_functions": "Funciones principales",
+    "query_functions": "Funciones de consulta",
+    "types": "Tipos TypeScript",
+    "formatters": "Formatters",
+    "parameters": "Parámetros",
+    "returns": "Retorno",
+    "examples": "Ejemplos",
+    "expand_description": "Expande las siglas legales encontradas en el texto proporcionado.",
+    "param_text": "Texto a procesar",
+    "param_options": "Configuración de expansión",
+    "param_expand_only_first": "Expandir solo primera ocurrencia",
+    "param_force_expansion": "Ignorar configuración global",
+    "param_preserve_case": "Mantener mayúsculas originales",
+    "param_auto_resolve": "Resolver duplicados automáticamente",
+    "param_duplicate_resolution": "Resolver duplicados específicos",
+    "param_exclude": "Siglas a excluir",
+    "param_include": "Solo expandir estas siglas",
+    "config_global_description": "Establece configuración global que se aplica a todas las expansiones.",
+    "get_config_description": "Retorna la configuración global actual.",
+    "reset_config_description": "Restaura la configuración global a valores por defecto.",
+    "search_description": "Busca una sigla específica en el diccionario. Retorna null si no existe.",
+    "list_description": "Retorna todas las siglas disponibles en el diccionario.",
+    "stats_description": "Retorna estadísticas del diccionario.",
+    "formatters_intro": "Sistema extensible de formatters. Puedes crear formatters personalizados:",
+    "register_formatter_description": "Registra un formatter personalizado en el sistema.",
+    "list_formatters_description": "Lista todos los nombres de formatters registrados.",
+    "duplicates_title": "Manejo de Duplicados",
+    "duplicates_intro": "Algunas siglas pueden tener múltiples significados. El sistema ofrece varias formas de resolver estos duplicados.",
+    "duplicates_method1_title": "1. Resolución manual en tiempo de ejecución",
+    "duplicates_method1_description": "Especifica qué significado usar para siglas ambiguas en cada llamada:",
+    "duplicates_method2_title": "2. Auto-resolver usando prioridad",
+    "duplicates_method2_description": "El sistema automáticamente elegirá el significado con mayor prioridad:",
+    "duplicates_method3_title": "3. Cambiar prioridad en el diccionario",
+    "duplicates_method3_description": "Para modificar permanentemente qué significado tiene preferencia, edita el archivo",
+    "priority_scale": "Escala de prioridad:",
+    "priority_very_high": "Prioridad muy alta (términos más comunes en derecho)",
+    "priority_high": "Prioridad alta",
+    "priority_medium": "Prioridad media",
+    "priority_low": "Prioridad baja",
+    "priority_very_low": "Prioridad muy baja (términos menos frecuentes)",
+    "priority_note": "Después de modificar el diccionario, ejecuta",
+    "priority_note_action": "para recompilar el paquete.",
+    "context_protection_title": "Protección de Contextos",
+    "context_protection_intro": "El motor automáticamente evita expandir siglas en contextos especiales:",
+    "context_urls": "No expande en",
+    "context_emails": "No expande en",
+    "context_code_blocks": "No expande dentro de",
+    "context_inline_code": "No expande dentro de"
+  },
+  "siglas": {
+    "title": "Siglas disponibles",
+    "search_placeholder": "Buscar sigla o significado...",
+    "category_all": "Todas",
+    "category_taxes": "Impuestos",
+    "category_laws": "Leyes",
+    "category_organisms": "Organismos",
+    "category_abbreviations": "Abreviaturas",
+    "category_others": "Otros",
+    "view_all": "Ver todas en modal",
+    "download": "Descargar listado (.txt)",
+    "total": "siglas",
+    "showing": "Mostrando",
+    "of": "de",
+    "table_acronym": "Sigla",
+    "table_meaning": "Significado",
+    "pagination_previous": "← Anterior",
+    "pagination_next": "Siguiente →"
+  },
+  "footer": {
+    "license": "Licencia MIT",
+    "author": "Autor",
+    "version": "Versión",
+    "links": "Enlaces",
+    "github": "GitHub",
+    "npm": "NPM",
+    "report_issues": "Reportar issues",
+    "contribute": "Contribuir"
+  },
+  "theme": {
+    "light": "Modo claro",
+    "dark": "Modo oscuro"
+  },
+  "language": {
+    "spanish": "Español",
+    "english": "English"
+  }
+}

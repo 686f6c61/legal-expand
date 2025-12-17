@@ -1,0 +1,77 @@
+.api-reference {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.api-section {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.api-section:last-child {
+  border-bottom: none;
+}
+
+.api-section .section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.api-section .section-icon {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.api-section h3 {
+  font-size: 1.75rem;
+  margin-bottom: 0;
+}
+
+.api-function {
+  margin-bottom: var(--spacing-xl);
+}
+
+.api-function h4 {
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-sm);
+  font-family: var(--font-family-mono);
+  color: var(--color-accent);
+}
+
+.api-function > p {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-secondary);
+}
+
+.api-params,
+.api-returns,
+.api-examples {
+  margin-bottom: var(--spacing-md);
+}
+
+.api-params strong,
+.api-returns strong,
+.api-examples strong {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.api-params ul {
+  margin: var(--spacing-sm) 0 0 var(--spacing-lg);
+  color: var(--color-text-secondary);
+}
+
+.api-params li {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.6;
+}
+
+.api-params code {
+  font-size: 0.875rem;
+}

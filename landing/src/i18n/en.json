@@ -1,0 +1,167 @@
+{
+  "hero": {
+    "title": "legal-expand",
+    "subtitle": "Smart expansion of Spanish legal acronyms",
+    "badge": "646 verified acronyms | RAE, BOE, DPEJ",
+    "description": "TypeScript library that automatically expands legal acronyms in Spanish legal texts, facilitating understanding of complex documents.",
+    "cta_install": "Install package",
+    "cta_demo": "View demo"
+  },
+  "features": {
+    "title": "Features",
+    "verified": "646 verified acronyms",
+    "sources": "Official sources: RAE, BOE, DPEJ",
+    "variants": "Smart variant detection",
+    "optimized": "Optimized for long documents",
+    "formats": "Multiple output formats",
+    "typescript": "TypeScript first",
+    "zero_deps": "Zero dependencies",
+    "tree_shake": "Tree-shakeable (~4KB gzipped)",
+    "ssr": "SSR-safe"
+  },
+  "quickstart": {
+    "title": "Quick start",
+    "install": "Installation",
+    "basic_usage": "Basic usage",
+    "common_options": "Common options",
+    "learn_more": "View full documentation"
+  },
+  "demo": {
+    "title": "Interactive demo",
+    "editor_title": "Live test",
+    "examples_title": "Predefined examples",
+    "placeholder": "Type or paste your legal text here...",
+    "expand_button": "Expand acronyms",
+    "format_label": "Format",
+    "format_plain": "Plain text",
+    "format_html": "HTML",
+    "format_structured": "Structured (JSON)",
+    "only_first_label": "Expand only first occurrence",
+    "exclude_label": "Exclude acronyms (comma separated)",
+    "stats_found": "acronyms found",
+    "stats_expanded": "expanded",
+    "error_unknown": "Unknown error",
+    "example_sentence": "Court sentence",
+    "example_contract": "Rental contract",
+    "example_notification": "AEAT notification",
+    "example_academic": "Academic document",
+    "example_boe": "BOE publication",
+    "example_administrative": "Administrative resolution",
+    "try_button": "Try it"
+  },
+  "usecases": {
+    "title": "Use cases",
+    "students": {
+      "title": "Law Students",
+      "description": "Understand complex legal texts without constantly consulting glossaries."
+    },
+    "oppositors": {
+      "title": "Competitive Exam Candidates",
+      "description": "Prepare exams with clear terminology and save time."
+    },
+    "academies": {
+      "title": "Academies and Universities",
+      "description": "Integrate into educational platforms for more accessible materials."
+    },
+    "law_firms": {
+      "title": "Law Firms",
+      "description": "Speed up document review and onboard junior associates."
+    },
+    "public_admin": {
+      "title": "Public Administration",
+      "description": "Clarify citizen communications and reduce queries."
+    },
+    "developers": {
+      "title": "Developers",
+      "description": "Integrate into legal applications and LLM analysis APIs."
+    }
+  },
+  "api": {
+    "title": "API reference",
+    "main_functions": "Main functions",
+    "query_functions": "Query functions",
+    "types": "TypeScript types",
+    "formatters": "Formatters",
+    "parameters": "Parameters",
+    "returns": "Returns",
+    "examples": "Examples",
+    "expand_description": "Expands legal acronyms found in the provided text.",
+    "param_text": "Text to process",
+    "param_options": "Expansion configuration",
+    "param_expand_only_first": "Expand only first occurrence",
+    "param_force_expansion": "Ignore global configuration",
+    "param_preserve_case": "Preserve original capitalization",
+    "param_auto_resolve": "Automatically resolve duplicates",
+    "param_duplicate_resolution": "Resolve specific duplicates",
+    "param_exclude": "Acronyms to exclude",
+    "param_include": "Only expand these acronyms",
+    "config_global_description": "Sets global configuration that applies to all expansions.",
+    "get_config_description": "Returns the current global configuration.",
+    "reset_config_description": "Restores the global configuration to default values.",
+    "search_description": "Searches for a specific acronym in the dictionary. Returns null if it doesn't exist.",
+    "list_description": "Returns all available acronyms in the dictionary.",
+    "stats_description": "Returns dictionary statistics.",
+    "formatters_intro": "Extensible formatter system. You can create custom formatters:",
+    "register_formatter_description": "Registers a custom formatter in the system.",
+    "list_formatters_description": "Lists all registered formatter names.",
+    "duplicates_title": "Handling Duplicates",
+    "duplicates_intro": "Some acronyms can have multiple meanings. The system offers several ways to resolve these duplicates.",
+    "duplicates_method1_title": "1. Manual resolution at runtime",
+    "duplicates_method1_description": "Specify which meaning to use for ambiguous acronyms in each call:",
+    "duplicates_method2_title": "2. Auto-resolve using priority",
+    "duplicates_method2_description": "The system will automatically choose the meaning with highest priority:",
+    "duplicates_method3_title": "3. Change priority in dictionary",
+    "duplicates_method3_description": "To permanently modify which meaning has preference, edit the file",
+    "priority_scale": "Priority scale:",
+    "priority_very_high": "Very high priority (most common terms in law)",
+    "priority_high": "High priority",
+    "priority_medium": "Medium priority",
+    "priority_low": "Low priority",
+    "priority_very_low": "Very low priority (less frequent terms)",
+    "priority_note": "After modifying the dictionary, run",
+    "priority_note_action": "to recompile the package.",
+    "context_protection_title": "Context Protection",
+    "context_protection_intro": "The engine automatically avoids expanding acronyms in special contexts:",
+    "context_urls": "Doesn't expand in",
+    "context_emails": "Doesn't expand in",
+    "context_code_blocks": "Doesn't expand inside",
+    "context_inline_code": "Doesn't expand inside"
+  },
+  "siglas": {
+    "title": "Available acronyms",
+    "search_placeholder": "Search acronym or meaning...",
+    "category_all": "All",
+    "category_taxes": "Taxes",
+    "category_laws": "Laws",
+    "category_organisms": "Organisms",
+    "category_abbreviations": "Abbreviations",
+    "category_others": "Others",
+    "view_all": "View all in modal",
+    "download": "Download list (.txt)",
+    "total": "acronyms",
+    "showing": "Showing",
+    "of": "of",
+    "table_acronym": "Acronym",
+    "table_meaning": "Meaning",
+    "pagination_previous": "← Previous",
+    "pagination_next": "Next →"
+  },
+  "footer": {
+    "license": "MIT License",
+    "author": "Author",
+    "version": "Version",
+    "links": "Links",
+    "github": "GitHub",
+    "npm": "NPM",
+    "report_issues": "Report issues",
+    "contribute": "Contribute"
+  },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode"
+  },
+  "language": {
+    "spanish": "Español",
+    "english": "English"
+  }
+}
