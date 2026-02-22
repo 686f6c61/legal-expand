@@ -2,7 +2,7 @@
   "hero": {
     "title": "legal-expand",
     "subtitle": "Smart expansion of Spanish legal acronyms",
-    "badge": "646 verified acronyms | RAE, BOE, DPEJ",
+    "badge": "v1.2.0 | 646 verified acronyms | RAE, BOE, DPEJ",
     "description": "TypeScript library that automatically expands legal acronyms in Spanish legal texts, facilitating understanding of complex documents.",
     "cta_install": "Install package",
     "cta_demo": "View demo"
@@ -17,13 +17,20 @@
     "typescript": "TypeScript first",
     "zero_deps": "Zero dependencies",
     "tree_shake": "Tree-shakeable (~4KB gzipped)",
-    "ssr": "SSR-safe"
+    "ssr": "SSR-safe",
+    "dual_modules": "Dual ESM + CJS support",
+    "diagnostics_api": "Diagnostics API with omission reasons",
+    "dictionary_validation": "Automatic dictionary validation",
+    "benchmark_ci": "Benchmarks with CI thresholds",
+    "workspace_ready": "Workspace-ready monorepo for lib + landing"
   },
   "quickstart": {
     "title": "Quick start",
     "install": "Installation",
     "basic_usage": "Basic usage",
     "common_options": "Common options",
+    "module_usage": "ESM + CJS usage",
+    "diagnostic_usage": "Detailed diagnostics",
     "learn_more": "View full documentation"
   },
   "demo": {
@@ -36,10 +43,12 @@
     "format_plain": "Plain text",
     "format_html": "HTML",
     "format_structured": "Structured (JSON)",
+    "format_diagnostic": "Diagnostics (JSON + omissions)",
     "only_first_label": "Expand only first occurrence",
     "exclude_label": "Exclude acronyms (comma separated)",
     "stats_found": "acronyms found",
     "stats_expanded": "expanded",
+    "stats_omitted": "omitted",
     "error_unknown": "Unknown error",
     "example_sentence": "Court sentence",
     "example_contract": "Rental contract",
@@ -86,6 +95,7 @@
     "returns": "Returns",
     "examples": "Examples",
     "expand_description": "Expands legal acronyms found in the provided text.",
+    "diagnostic_description": "Returns structured output plus omitted acronyms with their exact reason.",
     "param_text": "Text to process",
     "param_options": "Expansion configuration",
     "param_expand_only_first": "Expand only first occurrence",

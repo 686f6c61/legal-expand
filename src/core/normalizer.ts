@@ -169,12 +169,25 @@ export function isInsideUrl(text: string, startPos: number, endPos: number): boo
  * Detecta si una posición está dentro de un email
  */
 export function isInsideEmail(text: string, startPos: number, endPos: number): boolean {
-  const window = 50;
-  const before = text.substring(Math.max(0, startPos - window), startPos);
-  const after = text.substring(endPos, Math.min(text.length, endPos + window));
+  // Buscar en una ventana local alrededor del match para evitar recorrer todo el texto.
+  const windowStart = Math.max(0, startPos - 100);
+  const windowEnd = Math.min(text.length, endPos + 100);
+  const windowText = text.substring(windowStart, windowEnd);
 
-  // Patrón: algo@dominio.com o algo.SIGLA@dominio.com
-  return /\S+@?\S*$/.test(before) && /^\S*@?\S+\.\S+/.test(after);
+  // Patrón pragmático de email (suficiente para proteger expansión en dominios/cuentas).
+  const emailRegex = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = emailRegex.exec(windowText)) !== null) {
+    const emailStart = windowStart + match.index;
+    const emailEnd = emailStart + match[0].length;
+
+    if (startPos >= emailStart && endPos <= emailEnd) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /**

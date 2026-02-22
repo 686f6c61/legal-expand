@@ -6,8 +6,18 @@
  * @license MIT
  */
 
-import { describe, it, expect } from 'vitest';
-import { expandirSiglas, buscarSigla, listarSiglas, obtenerEstadisticas } from '../src/index';
+import { describe, it, expect, afterEach } from 'vitest';
+import {
+  expandirSiglas,
+  buscarSigla,
+  listarSiglas,
+  obtenerEstadisticas,
+  resetearConfiguracion
+} from '../src/index';
+
+afterEach(() => {
+  resetearConfiguracion();
+});
 
 describe('expandirSiglas', () => {
   it('should expand a single acronym', () => {

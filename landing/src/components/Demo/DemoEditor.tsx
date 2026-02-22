@@ -11,8 +11,8 @@
  */
 
 import { useState } from 'react';
-import { expandirSiglas } from 'legal-expand';
-import type { ExpansionOptions } from 'legal-expand';
+import { expandirSiglas, expandirSiglasDetallado } from 'legal-expand';
+import type { DiagnosticOutput, ExpansionOptions, StructuredOutput } from 'legal-expand';
 import { useTranslation } from '@hooks/useTranslation';
 import './DemoEditor.css';
 
@@ -24,27 +24,25 @@ export default function DemoEditor({ initialText = '' }: DemoEditorProps) {
   const { t } = useTranslation();
   const [text, setText] = useState(initialText);
   const [result, setResult] = useState('');
-  const [format, setFormat] = useState<'plain' | 'html' | 'structured'>('plain');
+  const [format, setFormat] = useState<'plain' | 'html' | 'structured' | 'diagnostic'>('plain');
   const [expandOnlyFirst, setExpandOnlyFirst] = useState(false);
   const [excludeInput, setExcludeInput] = useState('');
-  const [stats, setStats] = useState({ found: 0, expanded: 0 });
+  const [stats, setStats] = useState({ found: 0, expanded: 0, omitted: 0 });
 
   const handleExpand = () => {
     if (!text.trim()) {
       setResult('');
-      setStats({ found: 0, expanded: 0 });
+      setStats({ found: 0, expanded: 0, omitted: 0 });
       return;
     }
 
     const options: ExpansionOptions = {
-      format,
+      format: format === 'diagnostic' ? 'structured' : format,
       expandOnlyFirst,
       exclude: excludeInput.split(',').map(s => s.trim()).filter(Boolean),
     };
 
     try {
-      const expanded = expandirSiglas(text, options);
-
       // Calcular estadísticas básicas
       const siglasPattern = /[A-ZÑÁÉÍÓÚ][A-ZÑÁÉÍÓÚ.\/\s]+/g;
       const foundMatches = text.match(siglasPattern) || [];
@@ -52,6 +50,11 @@ export default function DemoEditor({ initialText = '' }: DemoEditorProps) {
       // Manejar diferentes formatos de retorno
       let resultText: string;
       let expandedCount: number;
+      let omittedCount = 0;
+
+      const expanded = format === 'diagnostic'
+        ? expandirSiglasDetallado(text, options)
+        : expandirSiglas(text, options);
 
       if (typeof expanded === 'string') {
         resultText = expanded;
@@ -59,17 +62,19 @@ export default function DemoEditor({ initialText = '' }: DemoEditorProps) {
       } else {
         // StructuredOutput
         resultText = JSON.stringify(expanded, null, 2);
-        expandedCount = expanded.acronyms.length;
+        expandedCount = (expanded as StructuredOutput).acronyms.length;
+        omittedCount = (expanded as DiagnosticOutput).omittedAcronyms?.length ?? 0;
       }
 
       setResult(resultText);
       setStats({
         found: foundMatches.length,
         expanded: expandedCount,
+        omitted: omittedCount,
       });
     } catch (error) {
       setResult(`Error: ${error instanceof Error ? error.message : t.demo.error_unknown}`);
-      setStats({ found: 0, expanded: 0 });
+      setStats({ found: 0, expanded: 0, omitted: 0 });
     }
   };
 
@@ -86,6 +91,7 @@ export default function DemoEditor({ initialText = '' }: DemoEditorProps) {
             <option value="plain">{t.demo.format_plain}</option>
             <option value="html">{t.demo.format_html}</option>
             <option value="structured">{t.demo.format_structured}</option>
+            <option value="diagnostic">{t.demo.format_diagnostic}</option>
           </select>
         </div>
 
@@ -130,6 +136,7 @@ export default function DemoEditor({ initialText = '' }: DemoEditorProps) {
           <div className="demo-stats">
             <span>{stats.found} {t.demo.stats_found}</span>
             <span>{stats.expanded} {t.demo.stats_expanded}</span>
+            <span>{stats.omitted} {t.demo.stats_omitted}</span>
           </div>
 
           <div className="result-content">

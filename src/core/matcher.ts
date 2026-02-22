@@ -29,7 +29,15 @@
  */
 
 import dictionaryData from '../data/dictionary.json' with { type: 'json' };
-import type { CompiledDictionary, DictionaryEntry, MatchInfo, InternalGlobalConfig } from '../types/index.js';
+import type {
+  CompiledDictionary,
+  DictionaryEntry,
+  MatchInfo,
+  OmittedAcronymReason,
+  OmittedMatchInfo,
+  MatchRunResult,
+  InternalGlobalConfig
+} from '../types/index.js';
 import {
   normalize,
   escapeRegex,
@@ -200,9 +208,9 @@ export class SiglasMatcher {
     const allVariants = new Set<string>();
 
     for (const entry of this.index.getAllEntries()) {
-      allVariants.add(entry.original);
+      this.addSearchVariants(allVariants, entry.original);
       for (const variant of entry.variants) {
-        allVariants.add(variant);
+        this.addSearchVariants(allVariants, variant);
       }
     }
 
@@ -221,11 +229,32 @@ export class SiglasMatcher {
   }
 
   /**
+   * Añade variantes de búsqueda (incluyendo formas con puntos en siglas compactas).
+   */
+  private addSearchVariants(target: Set<string>, value: string): void {
+    target.add(value);
+
+    // Añadir variantes ampliadas solo para siglas compactas (evita falsos positivos).
+    if (/^[A-ZÁÉÍÓÚÑÜ0-9]{3,10}$/.test(value)) {
+      const dottedUpper = `${value.split('').join('.')}.`;
+      const lower = value.toLowerCase();
+      const dottedLower = `${lower.split('').join('.')}.`;
+
+      target.add(dottedUpper);
+      target.add(lower);
+      target.add(dottedLower);
+    }
+  }
+
+  /**
    * Encuentra todos los matches de siglas en el texto
    */
-  findMatches(text: string, options: InternalGlobalConfig['defaultOptions']): MatchInfo[] {
+  findMatches(text: string, options: InternalGlobalConfig['defaultOptions']): MatchRunResult {
     const matches: MatchInfo[] = [];
+    const omittedMatches: OmittedMatchInfo[] = [];
     const seen = new Set<string>();
+    let totalAcronymsFound = 0;
+    let ambiguousNotExpanded = 0;
 
     // Reset del regex global
     this.pattern.lastIndex = 0;
@@ -235,6 +264,16 @@ export class SiglasMatcher {
       const matched = match[0];
       const startPos = match.index;
       const endPos = startPos + matched.length;
+      const normalizedMatched = normalize(matched);
+      const pushOmitted = (reason: OmittedAcronymReason, details?: string) => {
+        omittedMatches.push({
+          original: matched,
+          startPos,
+          endPos,
+          reason,
+          details
+        });
+      };
 
       // Validación 1: No es parte de palabra más larga
       if (isPartOfLargerWord(text, startPos, endPos)) {
@@ -250,41 +289,55 @@ export class SiglasMatcher {
       });
 
       if (specialContext) {
+        const reasonMap: Record<string, OmittedAcronymReason> = {
+          url: 'inside-url',
+          email: 'inside-email',
+          'code-block': 'inside-code-block',
+          'inline-code': 'inside-inline-code'
+        };
+
+        const mappedReason = reasonMap[specialContext];
+        if (mappedReason) {
+          pushOmitted(mappedReason);
+        }
         continue;
       }
 
       // Validación 3: Verificar exclude/include
       if (options.exclude && options.exclude.length > 0) {
-        const normalizedMatched = normalize(matched);
         const isExcluded = options.exclude.some(ex => normalize(ex) === normalizedMatched);
         if (isExcluded) {
+          pushOmitted('excluded');
           continue;
         }
       }
 
       if (options.include && options.include.length > 0) {
-        const normalizedMatched = normalize(matched);
         const isIncluded = options.include.some(inc => normalize(inc) === normalizedMatched);
         if (!isIncluded) {
+          pushOmitted('not-in-include');
           continue;
         }
       }
 
       // Validación 4: expandOnlyFirst - skip si ya vimos esta sigla
       if (options.expandOnlyFirst) {
-        const normalizedMatched = normalize(matched);
         if (seen.has(normalizedMatched)) {
+          pushOmitted('expand-only-first');
           continue;
         }
         seen.add(normalizedMatched);
       }
 
       // Buscar en diccionario
-      const entry = this.index.lookup(matched, options.preserveCase);
+      const entry = this.index.lookup(matched, false);
 
       if (!entry) {
+        pushOmitted('not-found');
         continue; // No encontrado
       }
+
+      totalAcronymsFound++;
 
       // Verificar si tiene múltiples significados
       const hasMultipleMeanings = this.index.hasMultipleMeanings(entry.original);
@@ -293,12 +346,13 @@ export class SiglasMatcher {
       // Si tiene múltiples significados y no tenemos resolución, skip
       if (hasMultipleMeanings) {
         // Verificar si hay resolución manual
-        const normalizedMatched = normalize(matched);
         const hasManualResolution = options.duplicateResolution &&
           Object.keys(options.duplicateResolution).some(k => normalize(k) === normalizedMatched);
 
         if (!hasManualResolution && !options.autoResolveDuplicates) {
           // No expandir duplicados sin resolver
+          ambiguousNotExpanded++;
+          pushOmitted('ambiguous-unresolved', allMeanings?.join(' | '));
           continue;
         }
 
@@ -310,7 +364,7 @@ export class SiglasMatcher {
           if (manualKey) {
             const resolvedMeaning = options.duplicateResolution[manualKey];
             matches.push({
-              original: matched,
+              original: options.preserveCase ? matched : entry.original,
               expansion: resolvedMeaning,
               startPos,
               endPos,
@@ -321,11 +375,16 @@ export class SiglasMatcher {
             continue;
           }
         }
+
+        if (hasManualResolution) {
+          pushOmitted('ambiguous-unresolved', allMeanings?.join(' | '));
+          continue;
+        }
       }
 
       // Añadir match
       matches.push({
-        original: matched,
+        original: options.preserveCase ? matched : entry.original,
         expansion: entry.significado,
         startPos,
         endPos,
@@ -335,7 +394,14 @@ export class SiglasMatcher {
       });
     }
 
-    return matches;
+    return {
+      matches,
+      omittedMatches,
+      stats: {
+        totalAcronymsFound,
+        ambiguousNotExpanded
+      }
+    };
   }
 
   /**

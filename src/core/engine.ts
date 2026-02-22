@@ -27,10 +27,16 @@
  * - formatters: Transformación de matches a salida formateada
  */
 
-import type { ExpansionOptions, StructuredOutput } from '../types/index.js';
+import type {
+  DiagnosticOutput,
+  ExpansionOptions,
+  OmittedAcronym,
+  StructuredOutput
+} from '../types/index.js';
 import { _getConfigManager } from '../config/global-config.js';
 import { getMatcher } from './matcher.js';
 import { FormatterFactory } from '../formatters/index.js';
+import { StructuredFormatter } from '../formatters/structured.js';
 
 // ============================================================================
 // API PRINCIPAL DE EXPANSIÓN
@@ -112,11 +118,68 @@ export function expandirSiglas(
   const matcher = getMatcher();
 
   // Buscar todas las siglas en el texto
-  const matches = matcher.findMatches(texto, mergedOptions);
+  const { matches, stats } = matcher.findMatches(texto, mergedOptions);
 
   // Aplicar el formatter apropiado para el formato solicitado
   const formatter = FormatterFactory.getFormatter(mergedOptions.format);
+  if (mergedOptions.format === 'structured' && formatter instanceof StructuredFormatter) {
+    return formatter.formatWithStats(texto, matches, stats);
+  }
+
   return formatter.format(texto, matches);
+}
+
+/**
+ * Expande siglas y devuelve diagnóstico completo de omisiones.
+ *
+ * Además de la salida estructurada estándar, incluye una lista de siglas
+ * detectadas pero no expandidas, con la razón exacta de omisión.
+ *
+ * @param texto - Texto a procesar
+ * @param opciones - Opciones de expansión (opcional)
+ * @returns Objeto de diagnóstico con expansiones y omisiones
+ */
+export function expandirSiglasDetallado(
+  texto: string,
+  opciones?: ExpansionOptions
+): DiagnosticOutput {
+  const configManager = _getConfigManager();
+
+  if (!configManager.shouldExpand(opciones)) {
+    return {
+      originalText: texto,
+      expandedText: texto,
+      acronyms: [],
+      omittedAcronyms: [],
+      stats: {
+        totalAcronymsFound: 0,
+        totalExpanded: 0,
+        ambiguousNotExpanded: 0
+      }
+    };
+  }
+
+  const mergedOptions = configManager.mergeOptions(opciones);
+  const matcher = getMatcher();
+  const { matches, omittedMatches, stats } = matcher.findMatches(texto, mergedOptions);
+
+  const structuredFormatter = new StructuredFormatter();
+  const structured = structuredFormatter.formatWithStats(texto, matches, stats);
+
+  const omittedAcronyms: OmittedAcronym[] = omittedMatches.map(omitted => ({
+    acronym: omitted.original,
+    position: {
+      start: omitted.startPos,
+      end: omitted.endPos
+    },
+    reason: omitted.reason,
+    details: omitted.details
+  }));
+
+  return {
+    ...structured,
+    omittedAcronyms
+  };
 }
 
 // ============================================================================

@@ -58,10 +58,10 @@ export class PlainTextFormatter implements Formatter {
     let result = originalText;
 
     for (const match of sortedMatches) {
-      // Insertar expansión justo después de la sigla
-      const before = result.substring(0, match.endPos);
+      // Reemplazar el segmento por el formato canónico + expansión.
+      const before = result.substring(0, match.startPos);
       const after = result.substring(match.endPos);
-      result = `${before} (${match.expansion})${after}`;
+      result = `${before}${match.original} (${match.expansion})${after}`;
     }
 
     return result;

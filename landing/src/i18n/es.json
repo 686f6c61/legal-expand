@@ -2,7 +2,7 @@
   "hero": {
     "title": "legal-expand",
     "subtitle": "Expansión inteligente de siglas legales españolas",
-    "badge": "646 siglas verificadas | RAE, BOE, DPEJ",
+    "badge": "v1.2.0 | 646 siglas verificadas | RAE, BOE, DPEJ",
     "description": "Librería TypeScript que expande automáticamente siglas legales en textos jurídicos españoles, facilitando la comprensión de documentos complejos.",
     "cta_install": "Instalar paquete",
     "cta_demo": "Ver demo"
@@ -17,13 +17,20 @@
     "typescript": "TypeScript first",
     "zero_deps": "Zero dependencies",
     "tree_shake": "Tree-shakeable (~4KB gzipped)",
-    "ssr": "SSR-safe"
+    "ssr": "SSR-safe",
+    "dual_modules": "Soporte dual ESM + CJS",
+    "diagnostics_api": "API de diagnóstico con razones de omisión",
+    "dictionary_validation": "Validación automática de diccionario",
+    "benchmark_ci": "Benchmarks con umbrales en CI",
+    "workspace_ready": "Monorepo/workspaces listo para librería + landing"
   },
   "quickstart": {
     "title": "Inicio rápido",
     "install": "Instalación",
     "basic_usage": "Uso básico",
     "common_options": "Opciones comunes",
+    "module_usage": "Uso ESM + CJS",
+    "diagnostic_usage": "Diagnóstico detallado",
     "learn_more": "Ver documentación completa"
   },
   "demo": {
@@ -36,10 +43,12 @@
     "format_plain": "Texto plano",
     "format_html": "HTML",
     "format_structured": "Estructurado (JSON)",
+    "format_diagnostic": "Diagnóstico (JSON + omisiones)",
     "only_first_label": "Expandir solo primera ocurrencia",
     "exclude_label": "Excluir siglas (separadas por coma)",
     "stats_found": "siglas encontradas",
     "stats_expanded": "expandidas",
+    "stats_omitted": "omitidas",
     "error_unknown": "Error desconocido",
     "example_sentence": "Sentencia judicial",
     "example_contract": "Contrato de alquiler",
@@ -86,6 +95,7 @@
     "returns": "Retorno",
     "examples": "Ejemplos",
     "expand_description": "Expande las siglas legales encontradas en el texto proporcionado.",
+    "diagnostic_description": "Devuelve salida estructurada más la lista de siglas omitidas y su motivo.",
     "param_text": "Texto a procesar",
     "param_options": "Configuración de expansión",
     "param_expand_only_first": "Expandir solo primera ocurrencia",

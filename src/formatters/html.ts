@@ -56,7 +56,7 @@ export class HtmlFormatter implements Formatter {
     let result = originalText;
 
     for (const match of sortedMatches) {
-      const acronymText = originalText.substring(match.startPos, match.endPos);
+      const acronymText = match.original;
 
       // Generar reemplazo: <abbr> + expansión inline
       const replacement =

@@ -10,7 +10,7 @@
  */
 
 import { useTranslation } from '@hooks/useTranslation';
-import { DownloadIcon, CodeIcon, SettingsIcon } from './Icons';
+import { DownloadIcon, CodeIcon, SettingsIcon, LayersIcon, SearchIcon } from './Icons';
 import './QuickStart.css';
 
 export default function QuickStart() {
@@ -60,6 +60,34 @@ expandirSiglas(texto, { format: 'html' });
 
 // Excluir siglas específicas
 expandirSiglas(texto, { exclude: ['IVA'] });`}</code></pre>
+            </div>
+          </div>
+
+          <div className="quick-start-section">
+            <div className="section-header">
+              <LayersIcon className="section-icon" size={24} />
+              <h3>{t.quickstart.module_usage}</h3>
+            </div>
+            <div className="code-block">
+              <pre><code>{`// ESM
+import { expandirSiglas } from 'legal-expand';
+
+// CommonJS
+const { expandirSiglas } = require('legal-expand');`}</code></pre>
+            </div>
+          </div>
+
+          <div className="quick-start-section">
+            <div className="section-header">
+              <SearchIcon className="section-icon" size={24} />
+              <h3>{t.quickstart.diagnostic_usage}</h3>
+            </div>
+            <div className="code-block">
+              <pre><code>{`import { expandirSiglasDetallado } from 'legal-expand';
+
+const debug = expandirSiglasDetallado('AEAT y BOE', { include: ['AEAT'] });
+console.log(debug.omittedAcronyms);
+// [{ acronym: 'BOE', reason: 'not-in-include', ... }]`}</code></pre>
             </div>
           </div>
 

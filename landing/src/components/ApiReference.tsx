@@ -95,6 +95,24 @@ expandirSiglas(texto, {
           </div>
 
           <div className="api-function">
+            <h4><code>expandirSiglasDetallado(texto, opciones?)</code></h4>
+            <p>{t.api.diagnostic_description}</p>
+
+            <div className="api-returns">
+              <strong>{t.api.returns}:</strong> DiagnosticOutput
+            </div>
+
+            <div className="code-block">
+              <pre><code>{`const debug = expandirSiglasDetallado('AEAT y BOE', {
+  include: ['AEAT']
+});
+
+// debug.omittedAcronyms
+// [{ acronym: 'BOE', reason: 'not-in-include', ... }]`}</code></pre>
+            </div>
+          </div>
+
+          <div className="api-function">
             <h4><code>configurarGlobalmente(config)</code></h4>
             <p>{t.api.config_global_description}</p>
 
@@ -213,6 +231,26 @@ console.log(todas.slice(0, 5)); // ['AEAT', 'BOE', 'CC', 'CE', 'IVA']`}</code></
     ambiguousNotExpanded: number;
   };
 }`}</code></pre>
+            </div>
+          </div>
+
+          <div className="api-function">
+            <h4>DiagnosticOutput</h4>
+            <div className="code-block">
+              <pre><code>{`interface DiagnosticOutput extends StructuredOutput {
+  omittedAcronyms: OmittedAcronym[];
+}
+
+type OmittedAcronymReason =
+  | 'excluded'
+  | 'not-in-include'
+  | 'expand-only-first'
+  | 'ambiguous-unresolved'
+  | 'inside-url'
+  | 'inside-email'
+  | 'inside-code-block'
+  | 'inside-inline-code'
+  | 'not-found';`}</code></pre>
             </div>
           </div>
 

@@ -21,7 +21,7 @@ Salida:  "La AEAT (Agencia Estatal de Administración Tributaria) notifica el IV
 
 - **646 siglas verificadas** de leyes, organismos, impuestos, tribunales y procedimientos
 - **Fuentes oficiales**: RAE, DPEJ, BOE y legislación vigente
-- **Detección inteligente** de variantes (AEAT, A.E.A.T., A.E.A.T)
+- **Detección inteligente** de variantes (AEAT, aeat, A.E.A.T.)
 - **Múltiples formatos**: texto plano, HTML semántico, JSON estructurado
 - **Documentos largos optimizados**: expandir solo primera ocurrencia para evitar repeticiones
 - **Control granular**: configuración global + override por llamada
@@ -29,6 +29,9 @@ Salida:  "La AEAT (Agencia Estatal de Administración Tributaria) notifica el IV
 - **Zero dependencies**: sin dependencias en runtime
 - **Tree-shakeable**: solo importas lo que usas (~4KB gzipped)
 - **TypeScript first**: types completos incluidos
+- **Dual module support**: compatible con `import` (ESM) y `require` (CJS)
+- **API de diagnóstico**: trazabilidad de siglas omitidas y motivo exacto
+- **Calidad automatizada**: validación de diccionario + benchmarks con umbrales en CI
 
 ## Índice
 
@@ -147,6 +150,16 @@ yarn add legal-expand
 pnpm add legal-expand
 ```
 
+### Compatibilidad de módulos (ESM + CJS)
+
+```typescript
+// ESM
+import { expandirSiglas } from 'legal-expand';
+
+// CJS
+const { expandirSiglas } = require('legal-expand');
+```
+
 ## Uso básico
 
 ### Expansión simple
@@ -192,8 +205,30 @@ expandirSiglas('El art 5 establece');  // Sin punto
 expandirSiglas('La AEAT notifica');
 // Salida: 'La AEAT (Agencia Estatal de Administración Tributaria) notifica'
 
+expandirSiglas('La aeat notifica');  // Minúsculas
+// Salida: 'La aeat (Agencia Estatal de Administración Tributaria) notifica'
+
 expandirSiglas('La A.E.A.T. notifica');  // Con puntos
 // Salida: 'La A.E.A.T. (Agencia Estatal de Administración Tributaria) notifica'
+```
+
+### Diagnóstico detallado de omisiones
+
+Para depurar por qué algunas siglas no se expanden, usa `expandirSiglasDetallado`.
+
+```typescript
+import { expandirSiglasDetallado } from 'legal-expand';
+
+const debug = expandirSiglasDetallado('AEAT y BOE', { include: ['AEAT'] });
+
+console.log(debug.omittedAcronyms);
+// [
+//   {
+//     acronym: 'BOE',
+//     position: { start: 7, end: 10 },
+//     reason: 'not-in-include'
+//   }
+// ]
 ```
 
 ## Formatos de salida
@@ -1861,6 +1896,16 @@ Función principal que expande siglas en un texto.
 
 **Retorna:** `string | StructuredOutput` según el formato especificado
 
+### expandirSiglasDetallado(texto, opciones?)
+
+Versión de diagnóstico que devuelve salida estructurada y listado de omisiones.
+
+**Parámetros:**
+- `texto` (string): Texto a procesar
+- `opciones` (ExpansionOptions, opcional): Configuración de expansión
+
+**Retorna:** `DiagnosticOutput`
+
 **Tipos:**
 
 ```typescript
@@ -1884,6 +1929,28 @@ interface StructuredOutput {
     totalExpanded: number;
     ambiguousNotExpanded: number;
   };
+}
+
+type OmittedAcronymReason =
+  | 'excluded'
+  | 'not-in-include'
+  | 'expand-only-first'
+  | 'ambiguous-unresolved'
+  | 'inside-url'
+  | 'inside-email'
+  | 'inside-code-block'
+  | 'inside-inline-code'
+  | 'not-found';
+
+interface OmittedAcronym {
+  acronym: string;
+  position: { start: number; end: number };
+  reason: OmittedAcronymReason;
+  details?: string;
+}
+
+interface DiagnosticOutput extends StructuredOutput {
+  omittedAcronyms: OmittedAcronym[];
 }
 ```
 
@@ -2073,6 +2140,37 @@ Todas las siglas incluidas en el diccionario han sido:
 
 El diccionario contiene actualmente **646 siglas** verificadas y está en constante actualización.
 
+## Calidad y mantenimiento
+
+Comandos recomendados para validar el paquete antes de publicar:
+
+```bash
+# Validar consistencia del diccionario compilado
+npm run validate:dictionary
+
+# Ejecutar tests + cobertura
+npm run test:coverage
+
+# Benchmark de humo con umbrales (falla ante regresiones)
+npm run bench:check
+```
+
+Si necesitas ajustar límites de benchmark en CI:
+
+```bash
+LEGAL_EXPAND_BENCH_MAX_AVG_MS=8 \
+LEGAL_EXPAND_BENCH_MAX_P95_MS=14 \
+LEGAL_EXPAND_BENCH_MAX_HEAP_MB=10 \
+npm run bench:check
+```
+
+En este monorepo puedes lanzar la landing desde la raíz con:
+
+```bash
+npm run landing:dev
+npm run landing:build
+```
+
 ## Contribuir
 
 Las contribuciones son bienvenidas. Para contribuir:
@@ -2080,7 +2178,7 @@ Las contribuciones son bienvenidas. Para contribuir:
 1. Haz fork del repositorio
 2. Crea una rama para tu funcionalidad (`git checkout -b feature/nueva-funcionalidad`)
 3. Realiza tus cambios y añade tests si es necesario
-4. Asegúrate de que todos los tests pasan (`npm test`)
+4. Asegúrate de que pasan validación, tests y benchmark (`npm run validate:dictionary && npm run test:coverage && npm run bench:check`)
 5. Haz commit de tus cambios (`git commit -am 'Añadir nueva funcionalidad'`)
 6. Push a tu rama (`git push origin feature/nueva-funcionalidad`)
 7. Crea un Pull Request
@@ -2166,14 +2264,14 @@ npm run build
 Ejecuta el test manual para verificar que la nueva sigla funciona correctamente:
 
 ```bash
-node test-manual.js
+node test/test-manual.js
 ```
 
 O prueba directamente en Node.js:
 
 ```bash
 node
-> const { expandirSiglas } = require('./dist/esm/index.js')
+> const { expandirSiglas } = require('./dist/cjs/index.cjs')
 > expandirSiglas('La LOPD establece...')
 ```
 
@@ -2323,5 +2421,3 @@ MIT
 ## Créditos
 
 Desarrollado con el diccionario de 646 siglas legales españolas verificadas de fuentes oficiales (RAE, BOE, DPEJ).
-
-

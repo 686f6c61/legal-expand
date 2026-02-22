@@ -124,6 +124,40 @@ export interface StructuredOutput {
 }
 
 /**
+ * Razones por las que una sigla detectada no se expandió
+ */
+export type OmittedAcronymReason =
+  | 'excluded'
+  | 'not-in-include'
+  | 'expand-only-first'
+  | 'ambiguous-unresolved'
+  | 'inside-url'
+  | 'inside-email'
+  | 'inside-code-block'
+  | 'inside-inline-code'
+  | 'not-found';
+
+/**
+ * Información de una sigla detectada pero no expandida
+ */
+export interface OmittedAcronym {
+  acronym: string;
+  position: {
+    start: number;
+    end: number;
+  };
+  reason: OmittedAcronymReason;
+  details?: string;
+}
+
+/**
+ * Salida de diagnóstico con trazabilidad de omisiones
+ */
+export interface DiagnosticOutput extends StructuredOutput {
+  omittedAcronyms: OmittedAcronym[];
+}
+
+/**
  * Configuración global del paquete
  */
 export interface GlobalConfig {
@@ -248,4 +282,35 @@ export interface MatchInfo {
   confidence: number;
   hasMultipleMeanings: boolean;
   allMeanings?: string[];
+}
+
+/**
+ * Información interna de un match omitido
+ * @internal
+ */
+export interface OmittedMatchInfo {
+  original: string;
+  startPos: number;
+  endPos: number;
+  reason: OmittedAcronymReason;
+  details?: string;
+}
+
+/**
+ * Estadísticas internas del proceso de matching
+ * @internal
+ */
+export interface MatchRunStats {
+  totalAcronymsFound: number;
+  ambiguousNotExpanded: number;
+}
+
+/**
+ * Resultado interno del matcher
+ * @internal
+ */
+export interface MatchRunResult {
+  matches: MatchInfo[];
+  omittedMatches: OmittedMatchInfo[];
+  stats: MatchRunStats;
 }

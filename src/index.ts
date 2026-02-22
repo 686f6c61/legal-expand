@@ -16,7 +16,13 @@
 // FUNCIONES PRINCIPALES
 // ============================================================================
 // Exportar funciones para expandir y buscar siglas en textos legales
-export { expandirSiglas, buscarSigla, listarSiglas, obtenerEstadisticas } from './core/engine.js';
+export {
+  expandirSiglas,
+  expandirSiglasDetallado,
+  buscarSigla,
+  listarSiglas,
+  obtenerEstadisticas
+} from './core/engine.js';
 
 // ============================================================================
 // CONFIGURACIÓN GLOBAL
@@ -42,8 +48,11 @@ export { FormatterFactory, type Formatter } from './formatters/index.js';
 // Exportar todos los tipos públicos para TypeScript
 // Proporciona autocompletado e IntelliSense en IDEs
 export type {
+  DiagnosticOutput,
   ExpansionOptions,
   ExpandedAcronym,
+  OmittedAcronym,
+  OmittedAcronymReason,
   StructuredOutput,
   GlobalConfig,
   AcronymSearchResult,

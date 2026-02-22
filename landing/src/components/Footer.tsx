@@ -65,7 +65,7 @@ export default function Footer() {
               {t.footer.author}: <a href="https://github.com/686f6c61" target="_blank" rel="noopener noreferrer">686f6c61</a>
             </p>
             <p className="text-secondary">
-              {t.footer.version}: 1.0.0
+              {t.footer.version}: 1.2.0
             </p>
           </div>
         </div>

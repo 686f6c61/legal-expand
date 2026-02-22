@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-02-22
+
+### Added
+
+- Nueva API `expandirSiglasDetallado()` para inspeccionar omisiones con motivo exacto.
+- Nuevos tipos públicos: `DiagnosticOutput`, `OmittedAcronym`, `OmittedAcronymReason`.
+- Validación de diccionario con `npm run validate:dictionary`.
+- Benchmark de umbrales con `npm run bench:check` (pensado para CI).
+- Workflow de CI reforzado con validación de diccionario y benchmark.
+- Landing actualizada con documentación/ejemplos de diagnóstico y soporte ESM+CJS.
+
+### Changed
+
+- Distribución dual de módulos: `import` (ESM) y `require` (CJS).
+- `package.json` actualizado con `exports.import` + `exports.require`.
+- `prepublishOnly` ahora ejecuta validación de diccionario, build, cobertura y benchmark.
+- Soporte de workspaces para flujo monorepo (librería + landing).
+- README ampliado con compatibilidad ESM/CJS, API de diagnóstico y comandos de calidad.
+- Versión de librería y landing actualizada a `1.2.0`.
+
+### Fixed
+
+- Métricas estructuradas y diagnóstico de omisiones alineadas con el resultado real del matcher.
+- Cobertura y pruebas ampliadas para proteger regresiones en matching, contexto y formatters.
+
 ## [1.0.0] - 2025-01-XX
 
 ### Added
@@ -136,4 +161,5 @@ For complete documentation, visit: https://legal-expand.onrender.com
 
 ---
 
+[1.2.0]: https://github.com/686f6c61/legal-expand/releases/tag/v1.2.0
 [1.0.0]: https://github.com/686f6c61/legal-expand/releases/tag/v1.0.0

@@ -10,7 +10,18 @@
  */
 
 import { useTranslation } from '@hooks/useTranslation';
-import { CheckIcon, DatabaseIcon, SearchIcon, ZapIcon, LayersIcon, CodeIcon, PackageIcon, FileTextIcon, ShieldIcon } from './Icons';
+import {
+  CheckIcon,
+  DatabaseIcon,
+  SearchIcon,
+  ZapIcon,
+  LayersIcon,
+  CodeIcon,
+  PackageIcon,
+  FileTextIcon,
+  ShieldIcon,
+  SettingsIcon
+} from './Icons';
 import './Features.css';
 
 export default function Features() {
@@ -26,6 +37,11 @@ export default function Features() {
     { text: t.features.zero_deps, Icon: PackageIcon },
     { text: t.features.tree_shake, Icon: FileTextIcon },
     { text: t.features.ssr, Icon: ShieldIcon },
+    { text: t.features.dual_modules, Icon: LayersIcon },
+    { text: t.features.diagnostics_api, Icon: FileTextIcon },
+    { text: t.features.dictionary_validation, Icon: CheckIcon },
+    { text: t.features.benchmark_ci, Icon: ZapIcon },
+    { text: t.features.workspace_ready, Icon: SettingsIcon },
   ];
 
   return (

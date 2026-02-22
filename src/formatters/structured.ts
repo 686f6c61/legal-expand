@@ -31,7 +31,7 @@
  */
 
 import type { Formatter } from './base.js';
-import type { MatchInfo, StructuredOutput, ExpandedAcronym } from '../types/index.js';
+import type { MatchInfo, MatchRunStats, StructuredOutput, ExpandedAcronym } from '../types/index.js';
 import { PlainTextFormatter } from './plain-text.js';
 
 /**
@@ -42,6 +42,22 @@ import { PlainTextFormatter } from './plain-text.js';
  * de procesamiento.
  */
 export class StructuredFormatter implements Formatter {
+  /**
+   * Formatea el resultado estructurado usando estadísticas explícitas del matcher.
+   *
+   * @param originalText - Texto original
+   * @param matches - Matches efectivamente expandidos
+   * @param stats - Estadísticas del matcher (incluye ambiguas no expandidas)
+   * @returns Objeto StructuredOutput con métricas consistentes
+   */
+  formatWithStats(
+    originalText: string,
+    matches: MatchInfo[],
+    stats: MatchRunStats
+  ): StructuredOutput {
+    return this.buildOutput(originalText, matches, stats);
+  }
+
   /**
    * Formatea el resultado como objeto JSON estructurado.
    *
@@ -56,6 +72,14 @@ export class StructuredFormatter implements Formatter {
    * @returns Objeto StructuredOutput con datos completos
    */
   format(originalText: string, matches: MatchInfo[]): StructuredOutput {
+    return this.buildOutput(originalText, matches);
+  }
+
+  private buildOutput(
+    originalText: string,
+    matches: MatchInfo[],
+    stats?: MatchRunStats
+  ): StructuredOutput {
     // Generar texto expandido reutilizando PlainTextFormatter
     const plainFormatter = new PlainTextFormatter();
     const expandedText = plainFormatter.format(originalText, matches);
@@ -73,9 +97,9 @@ export class StructuredFormatter implements Formatter {
     }));
 
     // Calcular estadísticas de procesamiento
-    const totalAcronymsFound = matches.length;
+    const totalAcronymsFound = stats?.totalAcronymsFound ?? matches.length;
     const totalExpanded = matches.filter(m => !m.hasMultipleMeanings || m.expansion).length;
-    const ambiguousNotExpanded = totalAcronymsFound - totalExpanded;
+    const ambiguousNotExpanded = stats?.ambiguousNotExpanded ?? (totalAcronymsFound - totalExpanded);
 
     return {
       originalText,
