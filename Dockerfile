@@ -2,6 +2,7 @@ FROM node:22-alpine AS build
 WORKDIR /app
 COPY . .
 RUN npm install
+RUN npm run build
 RUN npm run landing:build
 
 FROM nginx:alpine
