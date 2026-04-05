@@ -1,9 +1,9 @@
 FROM node:22-alpine AS build
 WORKDIR /app
-COPY . .
+COPY landing/ ./landing/
+WORKDIR /app/landing
 RUN npm install
-RUN npm run build
-RUN npm run landing:build
+RUN npx tsc && npx vite build
 
 FROM nginx:alpine
 COPY --from=build /app/landing/dist /usr/share/nginx/html
