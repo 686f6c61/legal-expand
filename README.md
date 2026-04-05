@@ -5,7 +5,7 @@
 
 **646 siglas legales españolas verificadas** | Expansión inteligente para textos jurídicos
 
-**[Demo interactiva en vivo](https://legal-expand.onrender.com)** | Prueba la expansión de siglas en tiempo real
+**[Demo interactiva en vivo](https://legal-expand.686f6c61.dev)** | Prueba la expansión de siglas en tiempo real
 
 ## ¿Qué hace este paquete?
 

@@ -1,6 +1,6 @@
 {
   "name": "legal-expand",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Expansión inteligente de siglas legales españolas. 646 siglas verificadas de RAE, BOE y DPEJ. Optimizado para documentos largos con expansión selectiva de primera ocurrencia.",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
@@ -69,7 +69,7 @@
   ],
   "author": "686f6c61",
   "license": "MIT",
-  "homepage": "https://legal-expand.onrender.com",
+  "homepage": "https://legal-expand.686f6c61.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/686f6c61/legal-expand.git"
