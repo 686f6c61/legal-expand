@@ -1,0 +1,11 @@
+FROM node:22-alpine AS build
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run landing:build
+
+FROM nginx:alpine
+COPY --from=build /app/landing/dist /usr/share/nginx/html
+RUN printf 'server {\n  listen 80;\n  server_name _;\n  root /usr/share/nginx/html;\n  index index.html;\n  server_tokens off;\n  gzip on;\n  gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript image/svg+xml;\n  location / {\n    try_files $uri $uri/ /index.html;\n  }\n  add_header X-Frame-Options "DENY" always;\n  add_header X-Content-Type-Options "nosniff" always;\n}\n' > /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
