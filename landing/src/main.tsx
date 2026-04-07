@@ -1,3 +1,15 @@
+// Inicializa GlitchTip (Sentry-compatible). DSN inyectada en build via VITE_GLITCHTIP_DSN.
+import * as __Sentry from '@sentry/browser';
+const __dsn = import.meta.env.VITE_GLITCHTIP_DSN;
+if (__dsn) {
+  __Sentry.init({
+    dsn: __dsn,
+    release: 'legal-expand-landing',
+    environment: import.meta.env.MODE,
+    tracesSampleRate: 0.01,
+  });
+}
+
 /**
  * legal-expand - Entry Point
  *
