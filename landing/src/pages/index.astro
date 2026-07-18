@@ -1,0 +1,374 @@
+---
+import Base from '../layouts/Base.astro';
+import edgeCases from '../data/edgecases.json';
+import examples from '../data/examples.json';
+
+const version = '1.6.0';
+const colabUrl = 'https://colab.research.google.com/github/686f6c61/pypi-legal-expand/blob/main/legal_expand_demo.ipynb';
+
+const features = [
+  { i: '01', accent: 'accent-forest', title: 'Expansión inteligente', body: '647 siglas verificadas de RAE, BOE y DPEJ. Detecta variantes con puntos, respeta mayúsculas y resuelve duplicados.' },
+  { i: '02', accent: 'accent-terracotta', title: 'Auditoría documental', body: 'Detecta siglas conocidas y desconocidas, cuenta apariciones y genera un informe con glosario y trazabilidad.' },
+  { i: '03', accent: 'accent-soft', title: 'Referencias BOE', body: 'Reconoce normas y unidades (artículos, disposiciones, anexos), enlaza a la legislación consolidada y marca la ambigüedad.' },
+  { i: '04', accent: 'accent-sky', title: 'Tres formatos', body: 'Texto plano, HTML semántico con etiquetas &lt;abbr&gt; y salida estructurada JSON con estadísticas de procesamiento.' },
+  { i: '05', accent: 'accent-ink', title: 'Diccionarios propios', body: 'Amplía el diccionario base con tus siglas en JSON o CSV, con prioridades y palabras de contexto.' },
+  { i: '06', accent: 'accent-sand', title: 'CLI y lotes', body: 'Interfaz de línea de comandos para expandir, auditar, exportar glosarios y procesar carpetas enteras.' },
+];
+
+const configCases = [
+  { caso: 'Expandir siglas en un texto', config: 'expandir_siglas(texto)' },
+  { caso: 'Salida HTML con &lt;abbr&gt;', config: 'ExpansionOptions(format="html")' },
+  { caso: 'Salida estructurada (JSON)', config: 'ExpansionOptions(format="structured")' },
+  { caso: 'Solo la primera aparición', config: 'ExpansionOptions(expand_only_first=True)' },
+  { caso: 'Excluir o limitar siglas', config: 'ExpansionOptions(exclude=[...], include=[...])' },
+  { caso: 'Diccionario propio (JSON/CSV)', config: 'ExpansionOptions(custom_dictionaries=["mio.json"])' },
+  { caso: 'Auditar un documento', config: 'auditar_texto(texto)' },
+  { caso: 'Glosario único', config: 'exportar_glosario(texto, "markdown")' },
+  { caso: 'Detectar y enlazar normas BOE (offline)', config: 'enriquecer_boe(texto, BOEOptions(mode="offline"))' },
+  { caso: 'Resolver cualquier norma por su número', config: 'BOEOptions(use_boe_index=True)  # por defecto' },
+  { caso: 'Traer el artículo completo del BOE', config: 'BOEOptions(mode="online", include_unit_text=True)' },
+  { caso: 'Enlazar normativa UE (RGPD, Directivas)', config: 'automático → EUR-Lex por número CELEX' },
+  { caso: 'Procesar una carpeta entera', config: 'procesar_directorio("entrada", "salida")' },
+];
+
+const codeSamples = {
+  sdk: {
+    file: 'app.py',
+    code: `from legal_expand import expandir_siglas, ExpansionOptions
+
+texto = "La AEAT gestiona el IVA según el art. 24 de la CE."
+
+# Texto plano
+print(expandir_siglas(texto))
+
+# HTML semántico con <abbr>
+html = expandir_siglas(texto, ExpansionOptions(format="html"))
+
+# Salida estructurada con estadísticas
+data = expandir_siglas(texto, ExpansionOptions(format="structured"))
+print(data.stats.total_expanded)`,
+  },
+  audit: {
+    file: 'auditoria.py',
+    code: `from legal_expand import auditar_texto
+
+informe = auditar_texto("La AEAT y el IRPF; también XYZ desconocida.")
+
+print(informe.stats.total_known)     # siglas reconocidas
+print(informe.stats.total_unknown)   # candidatas sin diccionario
+for entrada in informe.glossary:
+    print(entrada.acronym, entrada.expansion, entrada.count)`,
+  },
+  boe: {
+    file: 'boe.py',
+    code: `from legal_expand import enriquecer_boe
+from legal_expand.types import BOEOptions
+
+texto = "El art. 14 de la Ley 39/2015 y el art. 5 de la Ley 19/2013."
+
+# Nivel 1 · Detectar y enlazar (offline, sin red).
+# Resuelve CUALQUIER norma española por su número (índice del catálogo BOE).
+n1 = enriquecer_boe(texto, BOEOptions(mode="offline"))
+
+# Nivel 2 · Confirmar en el BOE (online, sin traer texto).
+n2 = enriquecer_boe(texto, BOEOptions(mode="online", include_unit_text=False))
+
+# Nivel 3 · Traer el artículo completo (online + texto íntegro).
+n3 = enriquecer_boe(texto, BOEOptions(mode="online", include_unit_text=True))
+for ref in n3.references:
+    for bloque in ref.unit_blocks:
+        print(bloque.title, "->", bloque.text[:80])`,
+  },
+  cli: {
+    file: 'terminal',
+    code: `# Expandir un archivo o stdin
+echo "La AEAT y el CP" | legal-expand expand -
+
+# Auditar y exportar glosario
+legal-expand audit informe.txt --report-format markdown
+legal-expand glossary informe.txt --glossary-format csv
+
+# Referencias BOE con texto de artículos
+legal-expand boe demanda.txt --mode online --report-format markdown
+
+# Procesar una carpeta entera
+legal-expand batch ./entrada ./salida`,
+  },
+};
+---
+
+<Base>
+  <header class="site-header">
+    <a class="brand" href="#top"><span>legal-expand</span><mark>{version}</mark></a>
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a href="#demo">Demo</a>
+      <a href="#edge">Casos límite</a>
+      <a href="#boe">BOE</a>
+      <a href="#config">Configurar</a>
+      <a href="#api">Integración</a>
+      <a href="/docs.html">Guía técnica</a>
+    </nav>
+    <a class="header-link" href="https://github.com/686f6c61/pypi-legal-expand">GitHub</a>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy page-shell">
+        <p class="eyebrow">Python · siglas jurídicas · 647 verificadas</p>
+        <h1 id="hero-title">Las siglas del derecho español,<br /><mark>expandidas y auditadas.</mark></h1>
+        <p class="hero-lede">
+          legal-expand detecta siglas legales, las expande con su significado oficial y resuelve las
+          referencias del texto: enlaza la norma citada, ya esté en el BOE (España) o en EUR-Lex (UE), y
+          trae el texto íntegro de sus artículos. Sin dependencias, con CLI y tres formatos de salida.
+        </p>
+        <div class="hero-cta-row">
+          <div class="install-line" role="group" aria-label="Comando de instalación">
+            <code>pip install legal-expand</code>
+            <button class="copy-command" type="button" data-copy="pip install legal-expand">Copiar</button>
+          </div>
+          <a class="colab-button" href={colabUrl} target="_blank" rel="noopener">Abrir en Colab</a>
+        </div>
+        <div class="hero-badges">
+          <span>Uso no comercial</span>
+          <span>Python 3.9+</span>
+          <span>0 dependencias</span>
+          <span>647 siglas</span>
+          <span>BOE + EUR-Lex</span>
+          <span>artículos en vivo</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASO DE USO / PROBLEMA -->
+    <section class="usecase-band" aria-labelledby="usecase-title">
+      <div class="page-shell">
+        <p class="eyebrow">Para contextos de IA y profesionales</p>
+        <h2 id="usecase-title" class="usecase-heading">El derecho está lleno de siglas y remisiones. Aquí las tienes resueltas.</h2>
+        <div class="usecase-grid">
+          <article class="usecase-card">
+            <span class="usecase-num">01</span>
+            <h3>Mejor contexto, mejores respuestas</h3>
+            <p>Expande las siglas y trae el texto íntegro de la norma citada. Una IA (o una persona) responde con el artículo delante, no de memoria: menos alucinaciones y respuestas verificables.</p>
+          </article>
+          <article class="usecase-card">
+            <span class="usecase-num">02</span>
+            <h3>La norma, en el momento</h3>
+            <p>Nadie se sabe todo el ordenamiento. legal-expand pone el significado de cada sigla y el texto del artículo justo cuando lo necesitas, sin salir del documento ni buscar en el BOE.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEMO -->
+    <section class="demo-section page-shell" id="demo" aria-labelledby="demo-title">
+      <div class="section-heading">
+        <p class="eyebrow">En vivo</p>
+        <h2 id="demo-title">Pruébalo aquí. Es el paquete real.</h2>
+        <p>El paquete de Python corre en tu navegador con Pyodide. Lo que ves es exactamente lo que devuelve <code>legal-expand</code>, edge cases incluidos.</p>
+      </div>
+
+      <div class="demo-shell" id="demo-shell">
+        <div class="demo-toolbar">
+          <span class="demo-toolbar-title">Elige un escrito jurídico</span>
+          <span class="runtime-pill" aria-live="polite"><span class="runtime-dot is-loading" id="runtime-dot"></span><span id="runtime-status">Cargando Python…</span></span>
+        </div>
+
+        <div class="demo-picker" id="demo-docs" role="group" aria-label="Escritos de ejemplo">
+          {examples.map((ex, i) => (
+            <button type="button" data-doc={ex.id} aria-pressed={i === 0 ? 'true' : 'false'}>{ex.label}</button>
+          ))}
+        </div>
+
+        <div class="demo-input-row">
+          <textarea id="demo-text" class="demo-textarea" spellcheck="false" aria-label="Texto del escrito">{examples[0].text}</textarea>
+          <button class="run-button" id="demo-run" disabled>Analizar</button>
+        </div>
+
+        <div class="demo-results" id="demo-results" aria-live="polite">
+          <article class="result-block">
+            <h3><span class="result-num">1</span> Siglas traducidas</h3>
+            <div class="output-surface" id="out-expand"><span class="placeholder">Cargando Python…</span></div>
+          </article>
+          <article class="result-block">
+            <h3><span class="result-num">2</span> Contenido de los artículos <small>del BOE</small></h3>
+            <div class="output-surface" id="out-articles"><span class="placeholder">Aparece al analizar.</span></div>
+          </article>
+          <article class="result-block">
+            <h3><span class="result-num">3</span> Referencias y enlaces <small>BOE y EUR-Lex</small></h3>
+            <div class="output-surface" id="out-refs"><span class="placeholder">Aparece al analizar.</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDGE CASES -->
+    <section class="edge-section page-shell band-line" id="edge" aria-labelledby="edge-title">
+      <div class="section-heading">
+        <p class="eyebrow">Casos límite reales</p>
+        <h2 id="edge-title">Lo difícil no es expandir, sino saber cuándo no hacerlo.</h2>
+        <p>Cada entrada y salida de abajo se generó con el paquete real. Son los casos donde un enfoque ingenuo falla.</p>
+      </div>
+
+      <div class="edge-grid">
+        {edgeCases.map((c) => (
+          <article class="edge-card">
+            <h3>{c.title} <span class="edge-tag">{c.tag}</span></h3>
+            <div class="edge-io">
+              <div class="io-in"><span class="io-label">entrada</span><br />{c.input}</div>
+              <div class="io-out"><span class="io-label">salida</span><br />{c.output}</div>
+            </div>
+            <p class="edge-note">{c.note}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section page-shell band-line" id="features" aria-labelledby="features-title">
+      <div class="section-heading">
+        <p class="eyebrow">Capacidades</p>
+        <h2 id="features-title">Todo lo que hace con tus documentos.</h2>
+      </div>
+      <div class="feature-grid">
+        {features.map((f) => (
+          <article class={`feature-card ${f.accent}`}>
+            <span class="feature-index">{f.i}</span>
+            <h3>{f.title}</h3>
+            <p set:html={f.body} />
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- BOE -->
+    <section class="boe-section" id="boe" aria-labelledby="boe-title">
+      <div class="page-shell section-heading">
+        <p class="eyebrow">Legislación consolidada</p>
+        <h2 id="boe-title">Del texto a la norma. Con el BOE detrás.</h2>
+        <p>Detecta referencias legales, las resuelve contra la legislación consolidada y, en modo online, trae el texto real del artículo citado.</p>
+      </div>
+      <div class="page-shell boe-steps">
+        <div class="boe-step"><span>01</span><strong>Detectar</strong><small>artículos, disposiciones, anexos y BOE-A directos</small></div>
+        <div class="boe-step"><span>02</span><strong>Resolver</strong><small>índice del catálogo: cualquier norma por su número</small></div>
+        <div class="boe-step"><span>03</span><strong>Traer</strong><small>texto del artículo desde la legislación consolidada</small></div>
+        <div class="boe-step"><span>04</span><strong>Avisar</strong><small>ambigüedad marcada; nada se inventa</small></div>
+      </div>
+    </section>
+
+    <!-- API -->
+    <section class="api-section page-shell band-line" id="api" aria-labelledby="api-title">
+      <div class="api-layout">
+        <div class="section-heading" style="padding-top:56px">
+          <p class="eyebrow">Superficie de integración</p>
+          <h2 id="api-title">Una librería.<br />Cuatro formas de usarla.</h2>
+          <ul class="api-contracts">
+            <li><span class="contract-label">SDK</span><span class="contract-copy"><code>expandir_siglas</code>, <code>auditar_texto</code>, <code>enriquecer_boe</code>.</span></li>
+            <li><span class="contract-label">Formatos</span><span class="contract-copy">Texto, HTML con <code>&lt;abbr&gt;</code> y JSON estructurado.</span></li>
+            <li><span class="contract-label">CLI</span><span class="contract-copy">expand, audit, glossary, boe, batch, info.</span></li>
+            <li><span class="contract-label">Datos</span><span class="contract-copy">Diccionarios propios en JSON o CSV.</span></li>
+          </ul>
+          <a class="secondary-action" href="/docs.html" style="display:inline-block;margin-top:28px">Guía técnica de configuración →</a>
+        </div>
+
+        <div class="code-workbench">
+          <div class="code-tabs" role="tablist" aria-label="Ejemplos de integración">
+            <button role="tab" data-code="sdk" aria-selected="true">SDK</button>
+            <button role="tab" data-code="audit" aria-selected="false">Auditoría</button>
+            <button role="tab" data-code="boe" aria-selected="false">BOE</button>
+            <button role="tab" data-code="cli" aria-selected="false">CLI</button>
+          </div>
+          <div class="code-toolbar">
+            <span id="code-filename">{codeSamples.sdk.file}</span>
+            <button class="copy-command" id="copy-code" type="button">Copiar</button>
+          </div>
+          <pre><code id="code-sample">{codeSamples.sdk.code}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFIGURACIÓN POR CASO -->
+    <section class="config-section page-shell band-line" id="config" aria-labelledby="config-title">
+      <div class="section-heading">
+        <p class="eyebrow">Cómo configurarlo</p>
+        <h2 id="config-title">Un caso, una línea.</h2>
+        <p>Cada necesidad se cubre con una función o una opción. Estos son los casos más habituales.</p>
+      </div>
+      <div class="table-scroll">
+      <table class="config-table">
+        <caption class="visually-hidden">Casos de uso y su configuración</caption>
+        <thead>
+          <tr><th scope="col">Quiero…</th><th scope="col">Configuración</th></tr>
+        </thead>
+        <tbody>
+          {configCases.map((c) => (
+            <tr>
+              <td set:html={c.caso} />
+              <td><code>{c.config}</code></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- BOUNDARY -->
+    <section class="boundary-section page-shell band-line" aria-labelledby="boundary-title">
+      <div class="section-heading">
+        <p class="eyebrow">Qué corre dónde</p>
+        <h2 id="boundary-title">En el navegador y en tu máquina.</h2>
+      </div>
+      <div class="table-scroll">
+      <table class="boundary-table">
+        <caption class="visually-hidden">Estado de capacidades en la demo web</caption>
+        <thead>
+          <tr><th scope="col">Función</th><th scope="col">En esta demo</th><th scope="col">Detalle</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Expandir · auditar · glosario</th><td><span class="state live">En vivo</span></td><td>El paquete real corre en el navegador con Pyodide; resultados idénticos al de tu máquina.</td></tr>
+          <tr><th scope="row">Detección de referencias BOE</th><td><span class="state live">En vivo</span></td><td>Normas, unidades, ambigüedad y enlaces oficiales, sin red.</td></tr>
+          <tr><th scope="row">Normativa UE (RGPD, Directivas)</th><td><span class="state live">En vivo</span></td><td>Se resuelve a su página en EUR-Lex por número CELEX, sin red.</td></tr>
+          <tr><th scope="row">Traer texto de artículos BOE</th><td><span class="state partial">Vía proxy</span></td><td>Requiere un pequeño proxy que sortee CORS; en tu máquina funciona directo con <code>--mode online</code>.</td></tr>
+          <tr><th scope="row">Procesamiento por lotes</th><td><span class="state offline">Local</span></td><td>El comando <code>batch</code> recorre carpetas de tu sistema de archivos.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="final-cta" aria-labelledby="cta-title">
+      <div class="page-shell">
+        <p class="eyebrow">legal-expand {version}</p>
+        <h2 id="cta-title">Tu documento entra.<br /><mark>Las siglas salen claras.</mark></h2>
+        <div class="cta-actions">
+          <a class="primary-action" href="https://pypi.org/project/legal-expand/">Instalar desde PyPI</a>
+          <a class="secondary-action" href="https://github.com/686f6c61/pypi-legal-expand">Ver el código</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="page-shell">
+      <strong>legal-expand</strong>
+      <div class="footer-meta">
+        <p>Expansión de siglas jurídicas españolas · PolyForm Noncommercial (uso no comercial)</p>
+        <p>Creado por <a href="https://github.com/686f6c61">686f6c61</a></p>
+      </div>
+      <nav aria-label="Enlaces del pie">
+        <a href="https://github.com/686f6c61/pypi-legal-expand">GitHub</a>
+        <a href="https://pypi.org/project/legal-expand/">PyPI</a>
+        <a href="https://github.com/686f6c61/pypi-legal-expand#readme">README</a>
+        <a href="https://github.com/686f6c61/pypi-legal-expand/blob/main/CHANGELOG.md">Changelog</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script define:vars={{ codeSamples, examples }}>
+    // Datos expuestos al script de interacción.
+    window.__LEGAL_EXPAND_CODE__ = codeSamples;
+    window.__LEGAL_EXPAND_EXAMPLES__ = examples;
+  </script>
+  <script is:inline src="/scripts/ui.js"></script>
+  <script is:inline type="module" src="/scripts/demo.js"></script>
+</Base>

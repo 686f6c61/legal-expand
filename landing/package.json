@@ -1,25 +1,16 @@
 {
-  "name": "legal-expand-landing",
-  "version": "1.2.0",
+  "name": "legal-expand-site",
   "type": "module",
+  "version": "0.1.0",
   "private": true,
+  "description": "Landing y demo interactiva de legal-expand",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "@sentry/browser": "^10.47.0",
-    "legal-expand": "file:../",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
-    "@vitejs/plugin-react": "^5.1.4",
-    "terser": "^5.44.1",
-    "typescript": "^5.3.3",
-    "vite": "^7.3.1"
+    "astro": "^7.1.1"
   }
 }
